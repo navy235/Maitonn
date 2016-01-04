@@ -1,7 +1,7 @@
 {
-  "name": "OAuthReact",
+  "name": "ReactRouterAnimate",
   "version": "0.0.0",
-  "description": "A Example  for React and Asp.net OAuth",
+  "description": "A Example for React-router and Redux animation",
   "private": true,
   "scripts": {
     "start": "grunt"
