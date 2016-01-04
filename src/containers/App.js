@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group'
 import { bindActionCreators } from 'redux';
+import classSet from 'classnames';
+import blacklist from 'blacklist';
 import { connect } from 'react-redux';
 import { History,Link } from 'react-router'
 import { IndexLink } from 'react-router';
@@ -8,67 +10,85 @@ import DocumentMeta from 'react-document-meta';
 import MobileApp from '../mixins/MobileApp';
 import { Container, NavigationBar } from '../components/mobile';
 import configs from '../configs';
-import * as authActions from '../actions/auth'
-
-
 
 var App = React.createClass({
 
-    mixins: [History,MobileApp],
-
-    componentWillReceiveProps(nextProps) {
-        if (!this.props.auth.token && nextProps.auth.token) {
-            // login
-            this.history.pushState(null, '/list');
-        } else if (this.props.auth.token && !nextProps.auth.token) {
-            // logout
-            this.history.pushState(null, '/login');
-        }
-    },
-
-    handleLogout(){
-        this.props.actions.logout();
-    },
+    mixins: [History],
 
     render() {
-        const {auth:{token}} = this.props;
+        var transitionName = 'view-transition-instant';
+        var transitionDurationEnter = 10;
+        var transitionDurationLeave = 60;
+        var transitionEnabled = false;
 
-        const child = React.cloneElement(this.props.children, {key: new Date().getTime()});
+        const { location } = this.props;
+        const className = classSet('ViewManager');
+        if (location && location.query && location.query.transition) {
+            transitionName = 'view-transition-' + location.query.transition;
+            if (location.query.transition === 'fade') {
+                transitionDurationEnter = 10;
+                transitionDurationLeave = 340;
+            } else {
+                transitionDurationEnter = 500;
+                transitionDurationLeave = 500;
+            }
+        }
+        const child = React.cloneElement(this.props.children);
+        const viewKey = child.type.componentName;
+        if (this.__currentView && this.__currentView != viewKey) {
+            transitionEnabled = true;
+        }
+        this.__currentView = viewKey;
 
-        const animate = child.type.animate;
-
-        const disabledAnimate = !this.prevAnimate || animate == this.prevAnimate;
-
-        this.prevAnimate = animate;
-
+        var navOptions = child.type.getNavigation(this.props);
+        navOptions = Object.assign(navOptions, {transition: transitionEnabled});
+        if (this.refs.appNavBar) {
+            setTimeout(() => {
+                this.refs.appNavBar.updateWithTransition(navOptions, location.query.transition);
+            }, 0)
+        }
         return (
             <Container id="app" direction='column' fill>
                 <DocumentMeta {...configs.app}/>
-                <NavigationBar name='main'/>
-                <ReactCSSTransitionGroup transitionName={animate}
-                                         transitionEnter={!disabledAnimate}
-                                         transitionLeave={!disabledAnimate}
-                                         transitionEnterTimeout={1500}
-                                         transitionLeaveTimeout={1500}
-                                         component='div'>
-                    {child}
+                <NavigationBar ref='appNavBar' name='app' {...navOptions} />
+                <ReactCSSTransitionGroup transitionName={transitionName}
+                                         transitionEnter={transitionEnabled}
+                                         transitionLeave={transitionEnabled}
+                                         transitionEnterTimeout={transitionDurationEnter}
+                                         transitionLeaveTimeout={transitionDurationLeave}
+                                         className={className}
+                                         component="div">
+                    <ViewContainer className='View' key={viewKey}>
+                        {child}
+                    </ViewContainer>
                 </ReactCSSTransitionGroup>
             </Container>
         );
     }
 });
+var ViewContainer = React.createClass({
+    statics: {
+        shouldFillVerticalSpace: true
+    },
+    propTypes: {
+        children: React.PropTypes.node
+    },
+    render () {
+        var props = blacklist(this.props, 'children');
+        return <div {...props}>{this.props.children}</div>;
+    }
+});
 
 function mapStateToProps(state) {
     return {
-        auth: state.auth
+        state
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(authActions, dispatch)
+        dispatch
     }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router';
 import { Provider } from 'react-redux';
-import { createHashHistory, useBasename } from 'history'
+import { createHashHistory, useBasename, useQueries } from 'history'
 import { DevTools } from './containers';
 import createRoutes from './routes'
 import createStore from './stores/createStore'
@@ -21,7 +21,7 @@ sessionStorage.setNamespace('dotaeye');
 //    basename: '/App'
 //});
 
-const history = createHashHistory();
+const history = useQueries(createHashHistory)();
 
 const client = new ApiClient();
 

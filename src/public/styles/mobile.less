@@ -1,3 +1,15 @@
+@import "ionicons/ionicons";
+@import "utils/varibles";
+@import "utils/flex";
+@import "utils/vendor-prefixes";
+@import "utils/animation";
+@import "mixins/retina-borders";
+@import "mixins/gradient";
+@import "mixins/size";
+@import "mixins/icon";
+@import "component/container";
+@import "component/NavigationBar";
+
 #main{
   position: absolute;
   top: 0;
@@ -6,5 +18,180 @@
   left: 0;
 }
 
-@import "utils/flex";
-@import "component/container";
+#home {
+  background: #00ffff;
+}
+
+#register{
+  background: #0000ff;
+}
+
+#login {
+  background: #00d6b2;
+}
+
+.ViewManager{
+  -webkit-flex: 1 1 0;
+  -ms-flex: 1 1 0;
+  flex: 1 1 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  overflow: hidden;
+}
+.View {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #f6f6f7;
+  line-height: 1;
+  overflow: hidden;
+  position: absolute;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.scrollView{
+  height: 2000px;
+  width: 100%;
+}
+
+
+// Animation
+// ------------------------------
+
+// React's CSSTransitionGroup requires an animation so we transition from .99 opacity to 1 with "artificial"
+
+// transition: instant (default)
+.view-transition-instant-enter-active { .animation( artificial 10ms ); }
+.view-transition-instant-leave { .animation( fadeOut 60ms ); }
+
+// transition: fade
+.view-transition-fade-enter-active { .animation( artificial 10ms ); }
+.view-transition-fade-leave { .animation( fadeOut 340ms ); }
+
+// transition: fade expand
+
+.view-transition-fade-expand-enter-active { .animation( artificial 10ms ); }
+.view-transition-fade-expand-leave { .animation( fadeExpand 340ms ); }
+
+// transition: fade contract
+
+.view-transition-fade-contract-enter-active { .animation( artificial 10ms ); }
+.view-transition-fade-contract-leave { .animation( fadeContract 340ms ); }
+
+// SHOW
+// ====
+
+// common stacking context
+
+.view-transition-show-from-top-enter-active,
+.view-transition-show-from-right-enter-active,
+.view-transition-show-from-bottom-enter-active,
+.view-transition-show-from-left-enter-active {
+  pointer-events: none; // disable user interaction whilst views are transitioning
+  z-index: @zindex-view-top;
+}
+
+.view-transition-reveal-from-top-leave,
+.view-transition-reveal-from-right-leave,
+.view-transition-reveal-from-bottom-leave,
+.view-transition-reveal-from-left-leave {
+  pointer-events: none; // disable user interaction whilst views are transitioning
+  z-index: @zindex-view-bottom;
+}
+
+// common animation components
+
+.view-transition-show-from-top-enter-active,
+.view-transition-show-from-top-leave,
+.view-transition-show-from-bottom-enter-active,
+.view-transition-show-from-bottom-leave {
+  .animation-duration( @view-transition-duration );
+  .animation-timing-function( @view-transition-timing-function );
+}
+.view-transition-show-from-left-enter-active,
+.view-transition-show-from-left-leave,
+.view-transition-show-from-right-enter-active,
+.view-transition-show-from-right-leave {
+  .animation-duration( @view-transition-duration );
+  .animation-timing-function( @view-transition-timing-function );
+}
+
+// blank state
+
+.view-transition-show-from-top-leave,
+.view-transition-show-from-bottom-leave   { .animation-name( artificial ); }
+
+// variants
+
+.view-transition-show-from-top-enter-active      { .animation-name( viewShowFromTopEnter ); }
+.view-transition-show-from-right-enter-active    { .animation-name( viewShowFromRightEnter ); }
+.view-transition-show-from-bottom-enter-active   { .animation-name( viewShowFromBottomEnter ); }
+.view-transition-show-from-left-enter-active     { .animation-name( viewShowFromLeftEnter ); }
+
+.view-transition-show-from-left-leave     { .animation-name( viewShowFromLeftLeave ); }
+.view-transition-show-from-right-leave    { .animation-name( viewShowFromRightLeave ); }
+
+// REVEAL
+// ======
+
+// common stacking context
+
+.view-transition-reveal-from-top-enter-active,
+.view-transition-reveal-from-right-enter-active,
+.view-transition-reveal-from-bottom-enter-active,
+.view-transition-reveal-from-left-enter-active {
+  pointer-events: none; // disable user interaction whilst views are transitioning
+  z-index: @zindex-view-bottom;
+}
+
+.view-transition-reveal-from-top-leave,
+.view-transition-reveal-from-right-leave,
+.view-transition-reveal-from-bottom-leave,
+.view-transition-reveal-from-left-leave {
+  pointer-events: none; // disable user interaction whilst views are transitioning
+  z-index: @zindex-view-top;
+}
+
+// common animation components
+
+.view-transition-reveal-from-top-enter-active,
+.view-transition-reveal-from-top-leave,
+.view-transition-reveal-from-bottom-enter-active,
+.view-transition-reveal-from-bottom-leave {
+  .animation-duration( @view-transition-duration );
+  .animation-timing-function( @view-transition-timing-function );
+}
+.view-transition-reveal-from-left-enter-active,
+.view-transition-reveal-from-left-leave,
+.view-transition-reveal-from-right-enter-active,
+.view-transition-reveal-from-right-leave {
+  .animation-duration( @view-transition-duration );
+  .animation-timing-function( @view-transition-timing-function );
+}
+
+// blank state
+
+.view-transition-reveal-from-top-enter-active,
+.view-transition-reveal-from-bottom-enter-active   { .animation-name( artificial ); }
+
+// variants
+
+.view-transition-reveal-from-top-leave      { .animation-name( viewRevealFromTopLeave ); }
+.view-transition-reveal-from-right-leave    { .animation-name( viewRevealFromRightLeave ); }
+.view-transition-reveal-from-bottom-leave   { .animation-name( viewRevealFromBottomLeave ); }
+.view-transition-reveal-from-left-leave     { .animation-name( viewRevealFromLeftLeave ); }
+
+.view-transition-reveal-from-left-enter-active     { .animation-name( viewRevealFromLeftEnter ); }
+.view-transition-reveal-from-right-enter-active    { .animation-name( viewRevealFromRightEnter ); }
+

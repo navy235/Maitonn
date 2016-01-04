@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
+import { History,Link } from 'react-router'
 import { Spin } from 'antd';
+import { Container, NavigationBar } from '../components/mobile';
 import connectStatic from '../utils/connectStatic'
 import * as orderActions from '../actions/order'
 import * as authActions from '../actions/auth'
@@ -10,33 +12,14 @@ var List = React.createClass({
 
     displayName: 'List',
 
+    mixins: [History],
+
     render() {
         return (
-            <div id="list" className='container'>
-                <h1>List Page Current UserName {this.props.auth.token.userName}</h1>
-
-                <div id='order'>
-                    <Spin spining={this.props.order.loading}/>
-                    <ul>
-                        {this.props.order.list.map((order, index)=> {
-                            return (
-                                <li key={index}>
-                                    <span>{order.id}</span>
-
-                                    <div>{order.customerName}</div>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                    <h4>Current Order</h4>
-                    <Spin spining={this.props.order.singleLoading}/>
-                    {this.props.order.current && (
-                        <div>
-                            {this.props.order.current.customerName}
-                        </div>
-                    )}
-                </div>
-            </div>
+            <Container id="list" fill>
+                <Link to='/login' query={{transition:'show-from-right'}}>Login page</Link>
+                <Link to='/Register' query={{transition:'show-from-right'}}>Register page</Link>
+            </Container>
         );
     }
 });

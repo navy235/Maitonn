@@ -1,6 +1,3 @@
-/**
- * Created by navy on 16/1/2.
- */
 import classNames from 'classnames';
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -15,6 +12,7 @@ const DIRECTIONS = {
 
 var defaultControllerState = {
     direction: 0,
+    transition: true,
     fade: false,
     leftArrow: false,
     leftButtonDisabled: false,
@@ -29,7 +27,7 @@ var defaultControllerState = {
     title: ''
 };
 
-function newState (from) {
+function newState(from) {
     var ns = Object.assign({}, defaultControllerState);
     if (from) Object.assign(ns, from);
     delete ns.name; // may leak from props
@@ -52,26 +50,26 @@ var NavigationBar = React.createClass({
 
     componentDidMount () {
         if (this.props.name) {
-            this.context.app.navigationBars[this.props.name] = this;
+            //this.context.app.navigationBars[this.props.name] = this;
         }
     },
 
     componentWillUnmount () {
         if (this.props.name) {
-            delete this.context.app.navigationBars[this.props.name];
+            //delete this.context.app.navigationBars[this.props.name];
         }
     },
 
     componentWillReceiveProps (nextProps) {
         this.setState(newState(nextProps));
-        if (nextProps.name !== this.props.name) {
-            if (nextProps.name) {
-                this.context.app.navigationBars[nextProps.name] = this;
-            }
-            if (this.props.name) {
-                delete this.context.app.navigationBars[this.props.name];
-            }
-        }
+        //if (nextProps.name !== this.props.name) {
+        //    if (nextProps.name) {
+        //        this.context.app.navigationBars[nextProps.name] = this;
+        //    }
+        //    if (this.props.name) {
+        //        delete this.context.app.navigationBars[this.props.name];
+        //    }
+        //}
     },
 
     update (state) {
@@ -97,7 +95,8 @@ var NavigationBar = React.createClass({
         });
 
         return (
-            <Tappable onTap={this.state.leftAction} className={className} disabled={this.state.leftButtonDisabled} component="button">
+            <Tappable onTap={this.state.leftAction} className={className} disabled={this.state.leftButtonDisabled}
+                      component="button">
                 {this.renderLeftArrow()}
                 {this.renderLeftLabel()}
             </Tappable>
@@ -106,21 +105,27 @@ var NavigationBar = React.createClass({
 
     renderLeftArrow () {
         var transitionName = 'NavigationBarTransition-Instant';
+        var transitionEnabled=this.state.transition;
         if (this.state.fade || this.state.direction) {
             transitionName = 'NavigationBarTransition-Fade';
         }
         var transitionDuration = transitionName === 'NavigationBarTransition-Instant' ? 50 : 500;
 
-        var arrow = this.state.leftArrow ? <span className="NavigationBarLeftArrow" /> : null;
+        var arrow = this.state.leftArrow ? <span className="NavigationBarLeftArrow"/> : null;
 
         return (
-            <ReactCSSTransitionGroup transitionName={transitionName} transitionEnterTimeout={transitionDuration} transitionLeaveTimeout={transitionDuration}>
+            <ReactCSSTransitionGroup transitionName={transitionName}
+                                     transitionEnter={transitionEnabled}
+                                     transitionLeave={transitionEnabled}
+                                     transitionEnterTimeout={transitionDuration}
+                                     transitionLeaveTimeout={transitionDuration}>
                 {arrow}
             </ReactCSSTransitionGroup>
         );
     },
 
     renderLeftLabel () {
+        var transitionEnabled=this.state.transition;
         var transitionName = 'NavigationBarTransition-Instant';
         if (this.state.fade) {
             transitionName = 'NavigationBarTransition-Fade';
@@ -132,14 +137,20 @@ var NavigationBar = React.createClass({
         var transitionDuration = transitionName === 'NavigationBarTransition-Instant' ? 50 : 500;
 
         return (
-            <ReactCSSTransitionGroup transitionName={transitionName} transitionEnterTimeout={transitionDuration} transitionLeaveTimeout={transitionDuration}>
+            <ReactCSSTransitionGroup transitionName={transitionName}
+                                     transitionEnter={transitionEnabled}
+                                     transitionLeave={transitionEnabled}
+                                     transitionEnterTimeout={transitionDuration}
+                                     transitionLeaveTimeout={transitionDuration}>
                 <span key={Date.now()} className="NavigationBarLeftLabel">{this.state.leftLabel}</span>
             </ReactCSSTransitionGroup>
         );
     },
 
     renderTitle () {
-        var title = this.state.title ? <span key={Date.now()} className="NavigationBarTitle">{this.state.title}</span> : null;
+        var transitionEnabled=this.state.transition;
+        var title = this.state.title ?
+            <span key={Date.now()} className="NavigationBarTitle">{this.state.title}</span> : null;
         var transitionName = 'NavigationBarTransition-Instant';
         if (this.state.fade) {
             transitionName = 'NavigationBarTransition-Fade';
@@ -151,13 +162,18 @@ var NavigationBar = React.createClass({
         var transitionDuration = transitionName === 'NavigationBarTransition-Instant' ? 50 : 500;
 
         return (
-            <ReactCSSTransitionGroup transitionName={transitionName} transitionEnterTimeout={transitionDuration} transitionLeaveTimeout={transitionDuration}>
+            <ReactCSSTransitionGroup transitionName={transitionName}
+                                     transitionEnter={transitionEnabled}
+                                     transitionLeave={transitionEnabled}
+                                     transitionEnterTimeout={transitionDuration}
+                                     transitionLeaveTimeout={transitionDuration}>
                 {title}
             </ReactCSSTransitionGroup>
         );
     },
 
     renderRightButton () {
+        var transitionEnabled=this.state.transition;
         var transitionName = 'NavigationBarTransition-Instant';
         if (this.state.fade || this.state.direction) {
             transitionName = 'NavigationBarTransition-Fade';
@@ -165,13 +181,18 @@ var NavigationBar = React.createClass({
         var transitionDuration = transitionName === 'NavigationBarTransition-Instant' ? 50 : 500;
 
         var button = (this.state.rightIcon || this.state.rightLabel) ? (
-            <Tappable key={Date.now()} onTap={this.state.rightAction} className="NavigationBarRightButton" disabled={this.state.rightButtonDisabled} component="button">
+            <Tappable key={Date.now()} onTap={this.state.rightAction} className="NavigationBarRightButton"
+                      disabled={this.state.rightButtonDisabled} component="button">
                 {this.renderRightLabel()}
                 {this.renderRightIcon()}
             </Tappable>
         ) : null;
         return (
-            <ReactCSSTransitionGroup transitionName={transitionName} transitionEnterTimeout={transitionDuration} transitionLeaveTimeout={transitionDuration}>
+            <ReactCSSTransitionGroup transitionName={transitionName}
+                                     transitionEnter={transitionEnabled}
+                                     transitionLeave={transitionEnabled}
+                                     transitionEnterTimeout={transitionDuration}
+                                     transitionLeaveTimeout={transitionDuration}>
                 {button}
             </ReactCSSTransitionGroup>
         );
@@ -182,11 +203,12 @@ var NavigationBar = React.createClass({
 
         var className = classNames('NavigationBarRightIcon', this.state.rightIcon);
 
-        return <span className={className} />;
+        return <span className={className}/>;
     },
 
     renderRightLabel () {
-        return this.state.rightLabel ? <span key={Date.now()} className="NavigationBarRightLabel">{this.state.rightLabel}</span> : null;
+        return this.state.rightLabel ?
+            <span key={Date.now()} className="NavigationBarRightLabel">{this.state.rightLabel}</span> : null;
     },
 
     render () {

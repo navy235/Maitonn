@@ -16,7 +16,7 @@ export default (store) => {
         const { auth: { token }} = store.getState();
         if (!token) {
             // oops, not logged in, so can't be here!
-            replaceState(null, '/login');
+            replaceState(null, '/login', {transition: 'show-from-bottom'});
         }
         cb();
     };
@@ -37,7 +37,7 @@ export default (store) => {
 
             <Route path='list' component={List} onEnter={requireLogin}/>
 
-            <Route path='profile' component={Profile} onEnter={requireLogin}/>
+            <Route path='profile' component={Profile} />
 
             { /* Catch all route */ }
             <Route path='*' component={NotFound} status={404}/>

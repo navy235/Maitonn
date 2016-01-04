@@ -1,6 +1,3 @@
-/**
- * Created by navy on 16/1/2.
- */
 var blacklist = require('blacklist');
 var classnames = require('classnames');
 var React = require('react');

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import { Route, Link} from 'react-router';
+import { Route, Link,IndexLink} from 'react-router';
 import { Spin } from 'antd';
 import * as actionCreators from '../actions/auth'
 import { RegisterForm } from '../components';
-
+import { Container } from '../components/mobile';
 import connectStatic from '../utils/connectStatic'
 
 
@@ -16,17 +16,13 @@ const Register = React.createClass({
     },
 
     render() {
-
         let {auth:{registering, registerError}} =this.props;
-
         return (
-            <div id="register" className='container'>
-                <h1>Register Page</h1>
-                <Link to='/login'>Login page</Link>
-                <Link to='/Register'>Register page</Link>
-                <RegisterForm onSubmit={this.onSubmit} submitting={registering} formError={registerError}
-                              ref='registerForm'/>
-            </div>
+            <Container id="register" fill>
+                <h1>Register Pager</h1>
+                <IndexLink to='/' query={{transition:'show-from-left'}}>home</IndexLink>
+                <Link to='/login' query={{transition:'show-from-left'}}>Login page</Link>
+            </Container>
         );
     }
 });
@@ -43,7 +39,13 @@ function mapDispatchToProps(dispatch) {
 }
 
 var statics = {
-    animate: 'right'
+    animate: 'right',
+    componentName: 'register',
+    getNavigation(){
+        return {
+            title: 'Register'
+        }
+    }
 };
 
 export default connectStatic(statics)(connect(mapStateToProps, mapDispatchToProps)(Register))
